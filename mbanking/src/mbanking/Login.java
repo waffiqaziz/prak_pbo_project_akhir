@@ -3,14 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package perbankan;
+package mbanking;
 
-import static com.mysql.cj.conf.PropertyKey.logger;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,10 +35,14 @@ public class Login extends JFrame {
   //DEKLARASI KOMPONEN
   JFrame window = new JFrame("Login");
   JLabel lUser = new JLabel("Username");
+
+  Container container = this.getContentPane();
+
   JTextField tfUser = new JTextField();
   JLabel lPass = new JLabel("PIN");
+
   JPasswordField pfPass = new JPasswordField();
-  JLabel lguide = new JLabel("Dont Have Account?");
+  JLabel lguide = new JLabel("<HTML><U>Dont Have Account?</U></HTML");
 
   JButton btnLogin = new JButton("Login");
   JButton btnReset = new JButton("Reset");
@@ -136,7 +142,9 @@ public class Login extends JFrame {
     lguide.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        System.out.println("Yay You Clicked Me");
+        System.out.println("Register Form Clicked");
+        window.dispose();
+        new Register();
       }
     });
     lPass.addMouseListener(new MouseAdapter() {
@@ -149,6 +157,12 @@ public class Login extends JFrame {
       @Override
       public void mouseClicked(MouseEvent e) {
         tfUser.requestFocusInWindow();
+      }
+    });
+    
+    window.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        System.out.println("Closed");
       }
     });
   }
