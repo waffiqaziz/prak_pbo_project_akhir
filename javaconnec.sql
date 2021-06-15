@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 13, 2021 at 08:45 AM
+-- Generation Time: Jun 15, 2021 at 05:12 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.10
 
@@ -24,34 +24,37 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Table structure for table `nasabah`
 --
 
-CREATE TABLE `user` (
+CREATE TABLE `nasabah` (
   `user_id` int(11) NOT NULL,
+  `full_name` varchar(25) NOT NULL,
   `user` varchar(15) NOT NULL,
   `email` varchar(20) NOT NULL,
-  `pass` varchar(20) NOT NULL,
+  `telp` varchar(15) NOT NULL,
+  `pin` int(20) NOT NULL,
   `dateOfBirth` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `user`
+-- Dumping data for table `nasabah`
 --
 
-INSERT INTO `user` (`user_id`, `user`, `email`, `pass`, `dateOfBirth`) VALUES
-(15, 'waffiqaziz', 'waffiqa@gmail.com', '12345678', '2002-01-13'),
-(16, 'aziz', 'joseon@gmail.com', 'waffiq', '2021-06-04'),
-(17, '1', 'gangnam@gmail.com', '1', '2021-06-10');
+INSERT INTO `nasabah` (`user_id`, `full_name`, `user`, `email`, `telp`, `pin`, `dateOfBirth`) VALUES
+(15, '0', 'waffiqaziz', 'waffiqa@gmail.com', '', 12345678, '2002-01-13'),
+(16, '0', 'aziz', 'joseon@gmail.com', '', 0, '2021-06-04'),
+(17, '0', '1', 'gangnam@gmail.com', '', 1, '2021-06-10'),
+(18, '2', '2', '2', '2', 2, NULL);
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `user`
+-- Indexes for table `nasabah`
 --
-ALTER TABLE `user`
+ALTER TABLE `nasabah`
   ADD PRIMARY KEY (`user_id`);
 
 --
@@ -59,10 +62,10 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT for table `nasabah`
 --
-ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+ALTER TABLE `nasabah`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
