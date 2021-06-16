@@ -5,7 +5,8 @@
  */
 package mbanking;
 
-import java.awt.Container;
+import user.MainMenu;
+import user.Register;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,13 +31,9 @@ public class Login extends JFrame {
   String user;
   String pin;
 
-  MyConnection con = new MyConnection();
-
   //DEKLARASI KOMPONEN
   JFrame window = new JFrame("Login");
   JLabel lUser = new JLabel("Username");
-
-  Container container = this.getContentPane();
 
   JTextField tfUser = new JTextField();
   JLabel lPass = new JLabel("PIN");
@@ -86,6 +83,7 @@ public class Login extends JFrame {
     btnLogin.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        MyConnection myConnection = new MyConnection();
         PreparedStatement ps = null;
         ResultSet rs;
         rs = null;
@@ -105,26 +103,48 @@ public class Login extends JFrame {
           String query = "SELECT * FROM `nasabah` WHERE `user` =? AND `pin` =?";
 
           try {
-            MyConnection myConnection = new MyConnection();
-
-            ps = myConnection.con.prepareStatement(query);
+            ps = myConnection.getCOnnection().prepareStatement(query);
             ps.setString(1, user);
             ps.setString(2, pin);
             rs = ps.executeQuery();
-
+            
             if (rs.next()) {
-              LoginSuccess ls = new LoginSuccess();
-              ls.setVisible(true);
-              ls.pack();
-              ls.setLocationRelativeTo(null); // center
-//            ls.jLabel.setText("Welcome " + user + " ");
-              ls.setDefaultCloseOperation(EXIT_ON_CLOSE); // running program berhenti jika tobol close di tekan
+              // simpan data userID dan full name dalam variabel
+              String id = rs.getString(1); // userID
+              String id2 = rs.getString(2); // full name
+              System.out.println(id);
+              window.dispose();
+              MainMenu mm = new MainMenu(id,id2);
+              mm.pack();
+              mm.setLocationRelativeTo(null); // center
               JOptionPane.showMessageDialog(null, "Login Success");
             } else {
               JOptionPane.showMessageDialog(null, "Incorrect Username or Password" + " Login Failed");
             }
           } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+          } finally { // https://stackoverflow.com/a/2225275/12159309
+            if (rs != null) {
+              try {
+                rs.close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
+            if (ps != null) {
+              try {
+                ps.close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
+            if (myConnection.getCOnnection() != null) {
+              try {
+                myConnection.getCOnnection().close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
           }
         }
       }
@@ -159,7 +179,7 @@ public class Login extends JFrame {
         tfUser.requestFocusInWindow();
       }
     });
-    
+
     window.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         System.out.println("Closed");

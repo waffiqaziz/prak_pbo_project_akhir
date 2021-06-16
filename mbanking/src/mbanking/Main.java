@@ -5,6 +5,7 @@
  */
 package mbanking;
 
+import user.MainMenu;
 import javax.swing.JOptionPane;
 
 /**
@@ -25,7 +26,8 @@ public class Main {
         if (myConnection.getCOnnection() == null) {
           JOptionPane.showMessageDialog(null, "Tidak dapat terhubung ke database. Pastikan Xampp sudah aktif!", "Pemberitahuan", JOptionPane.INFORMATION_MESSAGE);
         } else {
-          new Login();
+//          new MainMenu("12345", "Waffiq Aziz");
+            new Login();
         }
       }
     });

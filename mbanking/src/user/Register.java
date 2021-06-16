@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mbanking;
+package user;
 
 import com.toedter.calendar.JDateChooser;
 import java.awt.Cursor;
@@ -25,6 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import mbanking.Login;
+import mbanking.MyConnection;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
@@ -113,7 +115,10 @@ public class Register {
     btnRegis.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-// TODO add your handling code here:
+        MyConnection myConnection = new MyConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
         String date = null;
         String name = tfName.getText();
         String user = tfUser.getText();
@@ -130,16 +135,11 @@ public class Register {
           System.out.println("Cek Date");
           System.out.println(date);
 
-          PreparedStatement ps;
-          ResultSet rs;
           boolean cek = false;
-
           // cek apakah username sudah ada/belum
           String query = "SELECT pin FROM `nasabah` WHERE `pin` =?";
           try {
-            MyConnection myConnection = new MyConnection();
-
-            ps = myConnection.con.prepareStatement(query);
+            ps = myConnection.getCOnnection().prepareStatement(query);
             ps.setString(1, pin);
             rs = ps.executeQuery();
 
@@ -150,15 +150,34 @@ public class Register {
             }
           } catch (SQLException ex) {
             Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
+          } finally { // close
+            if (rs != null) {
+              try {
+                rs.close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
+            if (ps != null) {
+              try {
+                ps.close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
+            if (myConnection.getCOnnection() != null) {
+              try {
+                myConnection.getCOnnection().close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
           }
-
           if (!cek) { // jika tidak ada user name yang sama, maka akan di masukkan kedalam database
             query = "INSERT INTO `nasabah`(`full_name`, `user`, `email`, `telp`, `pin`, `dateOfBirth`) VALUES (?,?,?,?,?,?)";
 
             try {
-              MyConnection myConnection = new MyConnection();
-
-              ps = myConnection.con.prepareStatement(query);
+              ps = myConnection.getCOnnection().prepareStatement(query);
               ps.setString(1, name);
               ps.setString(2, user);
               ps.setString(3, email);
@@ -179,7 +198,29 @@ public class Register {
               }
             } catch (SQLException ex) {
               Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+            if (rs != null) {
+              try {
+                rs.close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
             }
+            if (ps != null) {
+              try {
+                ps.close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
+            if (myConnection.getCOnnection() != null) {
+              try {
+                myConnection.getCOnnection().close();
+              } catch (SQLException e) {
+                /* Ignored */
+              }
+            }
+          }
           } else {
             JOptionPane.showMessageDialog(null, "ATM has been Registered as M-Banking");
           }

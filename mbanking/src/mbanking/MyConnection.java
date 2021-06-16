@@ -21,7 +21,7 @@ public class MyConnection {
   String url = "jdbc:mysql://localhost/javaconnec";
   String user = "root";
   String pass = "";
-  Connection con = null;
+  private Connection con = null;
 
   // menyambungkan database mysql
   public MyConnection(){
