@@ -44,7 +44,7 @@ public class Register {
   JLabel lDate = new JLabel("Date of Birth");
   JLabel lUser = new JLabel("UserID");
 
-  JLabel lguide = new JLabel("<HTML><U>Have Account</U></HTML");
+  JLabel lguide = new JLabel("<HTML><U>Have Account?</U></HTML");
 
   JPasswordField pfPin = new JPasswordField();
   JTextField tfName = new JTextField(20);
@@ -122,15 +122,14 @@ public class Register {
         String pin = String.valueOf(pfPin.getPassword());
 
         // cek jika ada kolom yang belum di isi
-        if (user.equals("") || email.equals("") || pin.equals("") || telp.equals("")) {
+        if (user.equals("") || email.equals("") || pin.equals("") || telp.equals("") || dcDate.getDate() == null) {
           JOptionPane.showMessageDialog(null, "All Form Must Filled");
-        }
-        if (dcDate.getDate() != null) { // jika date terisi
+        } else { // jika date terisi
           SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd"); // format tahun-bulan-hari
           date = dateformat.format(dcDate.getDate());
           System.out.println("Cek Date");
           System.out.println(date);
-        } else {
+
           PreparedStatement ps;
           ResultSet rs;
           boolean cek = false;
@@ -152,7 +151,7 @@ public class Register {
           } catch (SQLException ex) {
             Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
           }
-          
+
           if (!cek) { // jika tidak ada user name yang sama, maka akan di masukkan kedalam database
             query = "INSERT INTO `nasabah`(`full_name`, `user`, `email`, `telp`, `pin`, `dateOfBirth`) VALUES (?,?,?,?,?,?)";
 
@@ -171,11 +170,12 @@ public class Register {
               } else {
                 ps.setNull(6, 0);
               }
-              ps.setString(6, date);
 
               // jika berhasil
               if (ps.executeUpdate() > 0) {
                 JOptionPane.showMessageDialog(null, "New User Add");
+                window.dispose();
+                new Login();
               }
             } catch (SQLException ex) {
               Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
