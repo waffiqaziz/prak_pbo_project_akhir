@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import mbanking.Login;
-import mbanking.MyConnection;
+import function.MyConnection;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
@@ -39,8 +39,9 @@ public class Register {
 
   //DEKLARASI KOMPONEN
   JFrame window = new JFrame("Register");
-  JLabel lName = new JLabel("Full Name");
+  JLabel lNo = new JLabel("Account Number");
   JLabel lPin = new JLabel("ATM PIN");
+  JLabel lName = new JLabel("Full Name");
   JLabel lEmail = new JLabel("Email");
   JLabel lTelp = new JLabel("No. Telephone");
   JLabel lDate = new JLabel("Date of Birth");
@@ -48,7 +49,8 @@ public class Register {
 
   JLabel lguide = new JLabel("<HTML><U>Have Account?</U></HTML");
 
-  JPasswordField pfPin = new JPasswordField();
+  JTextField tfNo = new JTextField(15);
+  JPasswordField pfPin = new JPasswordField(4);
   JTextField tfName = new JTextField(20);
   JTextField tfEmail = new JTextField();
   JTextField tfTelp = new JTextField(15);
@@ -59,13 +61,14 @@ public class Register {
 
   public Register() {
     window.setLayout(null);
-    window.setSize(450, 420);
+    window.setSize(450, 460);
     window.setVisible(true);
     window.setLocationRelativeTo(null); // center
     window.setResizable(false);
     window.setDefaultCloseOperation(EXIT_ON_CLOSE); // running program berhenti jika tombol close ditekan
 
 //ADD COMPONENT
+    window.add(lNo);
     window.add(lPin);
     window.add(lName);
     window.add(lEmail);
@@ -76,6 +79,7 @@ public class Register {
     window.add(pfPin);
     window.add(tfEmail);
     window.add(dcDate);
+    window.add(tfNo);
     window.add(tfName);
     window.add(tfTelp);
     window.add(tfUser);
@@ -84,24 +88,27 @@ public class Register {
 
 // SETT BOUNDS
 // sett bounds(m,n,o,p) >>> (sumbu-x,sumbu-y,panjang komponen, tinggi komponen)
-    lName.setBounds(90, 35, 70, 30);
+    lNo.setBounds(90, 35, 95, 30);
     lPin.setBounds(90, 75, 50, 30);
     lEmail.setBounds(90, 115, 35, 30);
-    lTelp.setBounds(90, 155, 90, 30);
-    lDate.setBounds(90, 195, 80, 30);
-    lUser.setBounds(90, 235, 50, 30);
-    tfName.setBounds(200, 35, 150, 30);
+    lName.setBounds(90, 155, 70, 30);
+    lTelp.setBounds(90, 195, 90, 30);
+    lDate.setBounds(90, 235, 80, 30);
+    lUser.setBounds(90, 275, 50, 30);
+    tfNo.setBounds(200, 35, 150, 30);
     pfPin.setBounds(200, 75, 150, 30);
-    tfEmail.setBounds(200, 115, 150, 30);
-    tfTelp.setBounds(200, 155, 150, 30);
-    dcDate.setBounds(200, 195, 150, 30);
-    tfUser.setBounds(200, 235, 150, 30);
-    lguide.setBounds(180, 275, 150, 30);
+    tfName.setBounds(200, 115, 150, 30);
+    tfEmail.setBounds(200, 155, 150, 30);
+    tfTelp.setBounds(200, 195, 150, 30);
+    dcDate.setBounds(200, 235, 150, 30);
+    tfUser.setBounds(200, 275, 150, 30);
+    lguide.setBounds(180, 315, 150, 30);
 
-    btnRegis.setBounds(240, 315, 90, 30);
-    btnReset.setBounds(110, 315, 90, 30);
+    btnRegis.setBounds(240, 355, 90, 30);
+    btnReset.setBounds(110, 355, 90, 30);
 
 // SETT MOUSE POINTER
+    lNo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     lName.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     lPin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     lEmail.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -118,8 +125,9 @@ public class Register {
         MyConnection myConnection = new MyConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         String date = null;
+        String no = tfNo.getText();
         String name = tfName.getText();
         String user = tfUser.getText();
         String email = tfEmail.getText();
@@ -136,11 +144,11 @@ public class Register {
           System.out.println(date);
 
           boolean cek = false;
-          // cek apakah username sudah ada/belum
-          String query = "SELECT pin FROM `nasabah` WHERE `pin` =?";
+          // cek apakah acc sudah ada/belum
+          String query = "SELECT pin FROM `nasabah` WHERE `acc_number` =?";
           try {
             ps = myConnection.getCOnnection().prepareStatement(query);
-            ps.setString(1, pin);
+            ps.setString(1, no);
             rs = ps.executeQuery();
 
             if (rs.next()) { // jika ada username yang sama
@@ -151,44 +159,26 @@ public class Register {
           } catch (SQLException ex) {
             Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
           } finally { // close
-            if (rs != null) {
-              try {
-                rs.close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
-            if (ps != null) {
-              try {
-                ps.close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
-            if (myConnection.getCOnnection() != null) {
-              try {
-                myConnection.getCOnnection().close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
+//            closeConnection(ps,rs,myConnection);
           }
           if (!cek) { // jika tidak ada user name yang sama, maka akan di masukkan kedalam database
-            query = "INSERT INTO `nasabah`(`full_name`, `user`, `email`, `telp`, `pin`, `dateOfBirth`) VALUES (?,?,?,?,?,?)";
+            query = "INSERT INTO `nasabah`(`acc_number`, `pin`, `full_name`, `user`, `email`, `telp`, `dateOfBirth`, `saldo`) VALUES (?,?,?,?,?,?,?,?)";
 
             try {
               ps = myConnection.getCOnnection().prepareStatement(query);
-              ps.setString(1, name);
-              ps.setString(2, user);
-              ps.setString(3, email);
-              ps.setString(4, telp);
-              ps.setString(5, pin);
+              ps.setString(1, no);
+              ps.setString(2, pin);
+              ps.setString(3, name);
+              ps.setString(4, user);
+              ps.setString(5, email);
+              ps.setString(6, telp);
 
               if (date != null) { // jika date kosong maka set null
-                ps.setString(6, date);
+                ps.setString(7, date);
               } else {
-                ps.setNull(6, 0);
+                ps.setNull(7, 0);
               }
+              ps.setString(8, "100000");
 
               // jika berhasil
               if (ps.executeUpdate() > 0) {
@@ -199,28 +189,8 @@ public class Register {
             } catch (SQLException ex) {
               Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
-            if (rs != null) {
-              try {
-                rs.close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
+//              closeConnection(ps,rs,myConnection);
             }
-            if (ps != null) {
-              try {
-                ps.close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
-            if (myConnection.getCOnnection() != null) {
-              try {
-                myConnection.getCOnnection().close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
-          }
           } else {
             JOptionPane.showMessageDialog(null, "ATM has been Registered as M-Banking");
           }
@@ -243,6 +213,12 @@ public class Register {
         System.out.println("Login Form Clicked");
         window.dispose();
         new Login();
+      }
+    });
+    lNo.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        tfNo.requestFocusInWindow();
       }
     });
     lUser.addMouseListener(new MouseAdapter() {
@@ -288,5 +264,29 @@ public class Register {
         System.out.println("Closed");
       }
     });
+  }
+
+  void closeConnection(PreparedStatement ps, ResultSet rs, MyConnection myConnection) {
+    if (rs != null) {
+      try {
+        rs.close();
+      } catch (SQLException e) {
+        /* Ignored */
+      }
+    }
+    if (ps != null) {
+      try {
+        ps.close();
+      } catch (SQLException e) {
+        /* Ignored */
+      }
+    }
+    if (myConnection.getCOnnection() != null) {
+      try {
+        myConnection.getCOnnection().close();
+      } catch (SQLException e) {
+        /* Ignored */
+      }
+    }
   }
 }

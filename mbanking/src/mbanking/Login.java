@@ -5,11 +5,13 @@
  */
 package mbanking;
 
+import function.MyConnection;
 import user.MainMenu;
 import user.Register;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -33,7 +35,7 @@ public class Login extends JFrame {
 
   //DEKLARASI KOMPONEN
   JFrame window = new JFrame("Login");
-  JLabel lUser = new JLabel("Username");
+  JLabel lUser = new JLabel("User ID");
 
   JTextField tfUser = new JTextField();
   JLabel lPass = new JLabel("PIN");
@@ -80,82 +82,55 @@ public class Login extends JFrame {
     lguide.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 // ACTION LISTENER
-    btnLogin.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MyConnection myConnection = new MyConnection();
-        PreparedStatement ps = null;
-        ResultSet rs;
-        rs = null;
-
-        // Tangkap input user        
-        user = tfUser.getText();
-        pin = String.valueOf(pfPass.getPassword());
-
-        if (user.isEmpty()) {
-          JOptionPane.showMessageDialog(null, "Fill User Coloumn");
-          tfUser.requestFocusInWindow();
-        }
-        if (pin.isEmpty()) {
-          JOptionPane.showMessageDialog(null, "Fill PIN Coloumn");
-          pfPass.requestFocusInWindow();
-        } else {
-          String query = "SELECT * FROM `nasabah` WHERE `user` =? AND `pin` =?";
-
-          try {
-            ps = myConnection.getCOnnection().prepareStatement(query);
-            ps.setString(1, user);
-            ps.setString(2, pin);
-            rs = ps.executeQuery();
-            
-            if (rs.next()) {
-              // simpan data userID dan full name dalam variabel
-              String id = rs.getString(1); // userID
-              String id2 = rs.getString(2); // full name
-              System.out.println(id);
-              window.dispose();
-              MainMenu mm = new MainMenu(id,id2);
-              mm.pack();
-              mm.setLocationRelativeTo(null); // center
-              JOptionPane.showMessageDialog(null, "Login Success");
-            } else {
-              JOptionPane.showMessageDialog(null, "Incorrect Username or Password" + " Login Failed");
-            }
-          } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-          } finally { // https://stackoverflow.com/a/2225275/12159309
-            if (rs != null) {
-              try {
-                rs.close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
-            if (ps != null) {
-              try {
-                ps.close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
-            if (myConnection.getCOnnection() != null) {
-              try {
-                myConnection.getCOnnection().close();
-              } catch (SQLException e) {
-                /* Ignored */
-              }
-            }
+    btnLogin.addActionListener((ActionEvent arg0) -> {
+      MyConnection myConnection = new MyConnection();
+      PreparedStatement ps = null;
+      ResultSet rs;
+      rs = null;
+      
+      // Tangkap input user
+      user = tfUser.getText();
+      pin = String.valueOf(pfPass.getPassword());
+      
+      if (user.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Fill User Coloumn");
+        tfUser.requestFocusInWindow();
+      }
+      if (pin.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Fill PIN Coloumn");
+        pfPass.requestFocusInWindow();
+      } else {
+        String query = "SELECT * FROM `nasabah` WHERE `user` =? AND `pin` =?";
+        
+        try {
+          ps = myConnection.getCOnnection().prepareStatement(query);
+          ps.setString(1, user);
+          ps.setString(2, pin);
+          rs = ps.executeQuery();
+          
+          if (rs.next()) {
+            // simpan data userID dan full name dalam variabel
+            String id = rs.getString(1); // userID
+            String id2 = rs.getString(4); // full name
+            System.out.println(id);
+            window.dispose();
+            MainMenu mm = new MainMenu(id, id2);
+            mm.pack();
+            mm.setLocationRelativeTo(null); // center
+            JOptionPane.showMessageDialog(null, "Login Success");
+          } else {
+            JOptionPane.showMessageDialog(null, "Incorrect Username or Password" + " Login Failed");
+            tfUser.requestFocusInWindow();
           }
-        }
+        } catch (SQLException ex) {
+          Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } 
       }
     });
 
-    btnReset.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        pfPass.setText("");
-        tfUser.setText("");
-      }
+    btnReset.addActionListener((ActionEvent arg0) -> {
+      pfPass.setText("");
+      tfUser.setText("");
     });
 
 // MOUSE LISTENER
@@ -181,8 +156,26 @@ public class Login extends JFrame {
     });
 
     window.addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         System.out.println("Closed");
+      }
+    });
+
+    tfUser.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          btnLogin.doClick();
+        }
+      }
+    });
+    pfPass.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          btnLogin.doClick();
+        }
       }
     });
   }

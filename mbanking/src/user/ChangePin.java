@@ -23,7 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-import mbanking.MyConnection;
+import function.MyConnection;
 
 /**
  *
@@ -109,19 +109,24 @@ public class ChangePin {
          3. jika iya, dilanjutkan dengan cek pin yang dimasukkan benar/tdk
          4. jika iya, dilanjutkan untuk update pin
          */
+        
         // 1. cek input user
         if (oldPin.isEmpty()) {
           JOptionPane.showMessageDialog(null, "Please Fill User Coloumn");
           pfOldPin.requestFocusInWindow();
+          cek = true;
         }
         if (newPin.isEmpty()) {
           JOptionPane.showMessageDialog(null, "Please Fill New PIN Coloumn");
           pfNewPin.requestFocusInWindow();
+          cek = true;
         }
-        if (rePin.isEmpty()) {
+        if (rePin.isEmpty())  {
           JOptionPane.showMessageDialog(null, "Please Fill Retype PIN Coloumn");
           pfNewPin.requestFocusInWindow();
-        } else {
+          cek = true;
+        } else if (!cek) {
+          cek = false;
           // 2. cek repin sama/tidak dengan newpin
           if (!(newPin.equals(rePin))) {
             JOptionPane.showMessageDialog(null, "PIN not Same");
@@ -132,11 +137,10 @@ public class ChangePin {
             // 3. cek pin apakah benar
             query = "SELECT `pin` FROM `nasabah` WHERE `user_id` =?";
             try {
-              String x = id;
               ps = myConnection.getCOnnection().prepareStatement(query);
-              ps.setString(1, x);
+              ps.setString(1, id);
               rs = ps.executeQuery();
-              System.out.println("cek");
+//              System.out.println("cek");
 
               String pinCheck = "";
               if (rs.next()) {
@@ -173,27 +177,7 @@ public class ChangePin {
               } catch (SQLException ex) {
                 Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
               } finally { // close
-                if (rs != null) {
-                  try {
-                    rs.close();
-                  } catch (SQLException e) {
-                    /* Ignored */
-                  }
-                }
-                if (ps != null) {
-                  try {
-                    ps.close();
-                  } catch (SQLException e) {
-                    /* Ignored */
-                  }
-                }
-                if (myConnection.getCOnnection() != null) {
-                  try {
-                    myConnection.getCOnnection().close();
-                  } catch (SQLException e) {
-                    /* Ignored */
-                  }
-                }
+                closeConnection(ps,rs,myConnection);
               }
             }
           }
@@ -242,5 +226,29 @@ public class ChangePin {
         System.out.println("Closed");
       }
     });
+  }
+  
+  void closeConnection(PreparedStatement ps, ResultSet rs, MyConnection myConnection) {
+    if (rs != null) {
+      try {
+        rs.close();
+      } catch (SQLException e) {
+        /* Ignored */
+      }
+    }
+    if (ps != null) {
+      try {
+        ps.close();
+      } catch (SQLException e) {
+        /* Ignored */
+      }
+    }
+    if (myConnection.getCOnnection() != null) {
+      try {
+        myConnection.getCOnnection().close();
+      } catch (SQLException e) {
+        /* Ignored */
+      }
+    }
   }
 }
