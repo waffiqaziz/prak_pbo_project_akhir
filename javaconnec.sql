@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 18, 2021 at 06:37 PM
+-- Generation Time: Jun 22, 2021 at 04:02 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.10
 
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Database: `javaconnec`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `log`
+--
+
+CREATE TABLE `log` (
+  `id_log` varchar(10) NOT NULL,
+  `type` varchar(15) NOT NULL,
+  `id_pengirim` int(10) NOT NULL,
+  `id_penerima` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -44,8 +57,9 @@ CREATE TABLE `nasabah` (
 --
 
 INSERT INTO `nasabah` (`user_id`, `acc_number`, `pin`, `full_name`, `user`, `email`, `telp`, `dateOfBirth`, `saldo`) VALUES
-(21, 12345, 1111, '1', '12345', '1', '1', '2021-06-18', 100025),
-(22, 2, 2222, 'Waffiq', '2222', '2', '2', '2021-06-17', 99975);
+(22, 2, 123, 'Waffiq', '2222', '2', '2', '2021-06-17', 99975),
+(23, 123190070, 1111, 'Waffiq Aziz', 'waffiqa', 'waffiq.a@gmail.com', '081234567', '2021-06-22', 98000),
+(24, 1, 1, 'Aziz', 'aziz', 'a@gmail.com', '0822', NULL, 102000);
 
 --
 -- Indexes for dumped tables
@@ -65,7 +79,7 @@ ALTER TABLE `nasabah`
 -- AUTO_INCREMENT for table `nasabah`
 --
 ALTER TABLE `nasabah`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
