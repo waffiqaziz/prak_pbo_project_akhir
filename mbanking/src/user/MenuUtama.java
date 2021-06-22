@@ -12,12 +12,13 @@ import java.awt.event.WindowEvent;
 import javax.swing.*;
 import function.MyConnection;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+import mbanking.Login;
 
 /**
  *
  * @author Waffiq Aziz / 123190070
  */
-public class MainMenu extends JFrame {
+public class MenuUtama extends JFrame {
 
   MyConnection myConnection = new MyConnection();
 
@@ -28,24 +29,23 @@ public class MainMenu extends JFrame {
   JFrame window = new JFrame("Main Menu");
   JLabel lGuide = new JLabel();
 
-  JButton btnSaldo= new JButton("Check Saldo (not yet)");
+  JButton btnSaldo= new JButton("Check Saldo");
   JButton btnChangePin = new JButton("Change Pin");
   JButton btnWithdraw = new JButton("Withdraw (not yet)");
   JButton btnTranfer = new JButton("Transfer");
   JButton btnHistory = new JButton("History Transaction (not yet)");
-
-  public MainMenu(String id1, String id2) {
-
-    lGuide.setText("Welcome " + id2);
+  JButton btnLogout = new JButton("Logout");
+  
+  public MenuUtama(Nasabah n) {
+    lGuide.setText("Welcome " + n.getNama());
     lGuide.setVerticalTextPosition(0);
     window.setLayout(null);
-    window.setSize(380, 380);
-    //  window.setDefaultCloseOperation(3);
+    window.setSize(380, 390);
     window.setVisible(true);
     window.setLocationRelativeTo(null); // center
     window.setResizable(false);
     window.setDefaultCloseOperation(EXIT_ON_CLOSE); // running program berhenti jika tombol close ditekan
-
+    
 //ADD COMPONENT
     window.add(lGuide);
     window.add(btnSaldo);
@@ -53,29 +53,53 @@ public class MainMenu extends JFrame {
     window.add(btnWithdraw);
     window.add(btnHistory);
     window.add(btnTranfer);
+    window.add(btnLogout);
 
 // SETT BOUNDS
 // sett bounds(m,n,o,p) >>> (sumbu-x,sumbu-y,panjang komponen, tinggi komponen)
-    lGuide.setBounds(0, 35, 380, 30);
-    btnSaldo.setBounds(125, 75, 130, 30);
-    btnTranfer.setBounds(125, 115, 130, 30);
-    btnWithdraw.setBounds(125, 155, 130, 30);
-    btnHistory.setBounds(115, 195, 150, 30);
-    btnChangePin.setBounds(125, 235, 130, 30);
+    lGuide.setBounds(0, 25, 370, 30);
+    btnSaldo.setBounds(120, 75, 130, 30);
+    btnTranfer.setBounds(120, 115, 130, 30);
+    btnWithdraw.setBounds(120, 155, 130, 30);
+    btnHistory.setBounds(110, 195, 150, 30);
+    btnChangePin.setBounds(120, 235, 130, 30);
+    btnLogout.setBounds(120, 275, 130, 30);
 
+    lGuide.setHorizontalAlignment(0);
 // ACTION LISTENER
     btnChangePin.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         window.dispose();
-        new ChangePin(id1);
+        new UbahPin(n);
+      }
+    });
+    btnSaldo.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        window.dispose();
+        new CekSaldo(n);
       }
     });
     btnTranfer.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         window.dispose();
-        new Transfer(id1);
+        new Transfer(n);
+      }
+    });
+    btnLogout.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        int yes = JOptionPane.showConfirmDialog(
+            null,
+            "Are you sure want to Logout",
+            "Confirm Logout",
+            JOptionPane.YES_NO_OPTION);
+        if (yes == JOptionPane.YES_OPTION){ 
+          window.dispose();
+          new Login();
+        } else;
       }
     });
 
