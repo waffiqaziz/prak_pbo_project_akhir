@@ -5,8 +5,7 @@
  */
 package mbanking;
 
-import function.MyConnection;
-import user.MainMenu;
+import user.MenuUtama;
 import user.Register;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -16,13 +15,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+import user.Nasabah;
 
 /**
  *
@@ -83,10 +78,7 @@ public class Login extends JFrame {
 
 // ACTION LISTENER
     btnLogin.addActionListener((ActionEvent arg0) -> {
-      MyConnection myConnection = new MyConnection();
-      PreparedStatement ps = null;
-      ResultSet rs;
-      rs = null;
+      Nasabah n1 = new Nasabah();
       
       // Tangkap input user
       user = tfUser.getText();
@@ -100,31 +92,16 @@ public class Login extends JFrame {
         JOptionPane.showMessageDialog(null, "Fill PIN Coloumn");
         pfPass.requestFocusInWindow();
       } else {
-        String query = "SELECT * FROM `nasabah` WHERE `user` =? AND `pin` =?";
-        
-        try {
-          ps = myConnection.getCOnnection().prepareStatement(query);
-          ps.setString(1, user);
-          ps.setString(2, pin);
-          rs = ps.executeQuery();
-          
-          if (rs.next()) {
-            // simpan data userID dan full name dalam variabel
-            String id = rs.getString(1); // userID
-            String id2 = rs.getString(4); // full name
-            System.out.println(id);
-            window.dispose();
-            MainMenu mm = new MainMenu(id, id2);
-            mm.pack();
-            mm.setLocationRelativeTo(null); // center
-            JOptionPane.showMessageDialog(null, "Login Success");
-          } else {
-            JOptionPane.showMessageDialog(null, "Incorrect Username or Password" + " Login Failed");
-            tfUser.requestFocusInWindow();
-          }
-        } catch (SQLException ex) {
-          Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        if(n1.login(user, Integer.valueOf(pin), n1)){
+          window.dispose();
+          MenuUtama mm = new MenuUtama(n1);
+          mm.pack();
+          mm.setLocationRelativeTo(null); // center 
+          JOptionPane.showMessageDialog(null, "Login Success");
+        } else {
+          JOptionPane.showMessageDialog(null, "Incorrect Username or Password" + " Login Failed");
+          tfUser.requestFocusInWindow();
+        }
       }
     });
 

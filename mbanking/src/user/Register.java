@@ -90,8 +90,8 @@ public class Register {
 // sett bounds(m,n,o,p) >>> (sumbu-x,sumbu-y,panjang komponen, tinggi komponen)
     lNo.setBounds(90, 35, 95, 30);
     lPin.setBounds(90, 75, 50, 30);
-    lEmail.setBounds(90, 115, 35, 30);
-    lName.setBounds(90, 155, 70, 30);
+    lEmail.setBounds(90, 155, 35, 30);
+    lName.setBounds(90, 115, 70, 30);
     lTelp.setBounds(90, 195, 90, 30);
     lDate.setBounds(90, 235, 80, 30);
     lUser.setBounds(90, 275, 50, 30);
@@ -122,6 +122,7 @@ public class Register {
     btnRegis.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        Nasabah n1 = new Nasabah();
         MyConnection myConnection = new MyConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -144,52 +145,16 @@ public class Register {
           System.out.println(date);
 
           boolean cek = false;
-          // cek apakah acc sudah ada/belum
-          String query = "SELECT pin FROM `nasabah` WHERE `acc_number` =?";
-          try {
-            ps = myConnection.getCOnnection().prepareStatement(query);
-            ps.setString(1, no);
-            rs = ps.executeQuery();
 
-            if (rs.next()) { // jika ada username yang sama
-              cek = true;
-            } else {
-              cek = false;
-            }
-          } catch (SQLException ex) {
-            Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-          } finally { // close
-//            closeConnection(ps,rs,myConnection);
-          }
-          if (!cek) { // jika tidak ada user name yang sama, maka akan di masukkan kedalam database
-            query = "INSERT INTO `nasabah`(`acc_number`, `pin`, `full_name`, `user`, `email`, `telp`, `dateOfBirth`, `saldo`) VALUES (?,?,?,?,?,?,?,?)";
-
-            try {
-              ps = myConnection.getCOnnection().prepareStatement(query);
-              ps.setString(1, no);
-              ps.setString(2, pin);
-              ps.setString(3, name);
-              ps.setString(4, user);
-              ps.setString(5, email);
-              ps.setString(6, telp);
-
-              if (date != null) { // jika date kosong maka set null
-                ps.setString(7, date);
-              } else {
-                ps.setNull(7, 0);
-              }
-              ps.setString(8, "100000");
-
-              // jika berhasil
-              if (ps.executeUpdate() > 0) {
-                JOptionPane.showMessageDialog(null, "New User Add");
-                window.dispose();
-                new Login();
-              }
-            } catch (SQLException ex) {
-              Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-//              closeConnection(ps,rs,myConnection);
+          if (!checkUserID(no)) { // jika tidak ada user name yang sama, maka akan di masukkan kedalam database
+            n1.setNasabah(no, name, user, email, telp, Integer.valueOf(pin));
+            n1.setSaldo(); // set saldo awal 100000
+            n1.setDate(date);
+            
+            if(n1.register()){
+              window.dispose();
+              new Login();
+              JOptionPane.showMessageDialog(null, "New User Add");
             }
           } else {
             JOptionPane.showMessageDialog(null, "ATM has been Registered as M-Banking");
@@ -265,28 +230,26 @@ public class Register {
       }
     });
   }
+  
+  private boolean checkUserID(String accNumber){ // cek apakah acc sudah ada/belum
+    MyConnection myConnection = new MyConnection();
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    
+    String query = "SELECT pin FROM `nasabah` WHERE `acc_number` =?";
+    try {
+      ps = myConnection.getCOnnection().prepareStatement(query);
+      ps.setString(1, accNumber);
+      rs = ps.executeQuery();
 
-  void closeConnection(PreparedStatement ps, ResultSet rs, MyConnection myConnection) {
-    if (rs != null) {
-      try {
-        rs.close();
-      } catch (SQLException e) {
-        /* Ignored */
+      if (rs.next()) { // jika ada username yang sama
+        return true;
+      } else {
+        return false;
       }
-    }
-    if (ps != null) {
-      try {
-        ps.close();
-      } catch (SQLException e) {
-        /* Ignored */
-      }
-    }
-    if (myConnection.getCOnnection() != null) {
-      try {
-        myConnection.getCOnnection().close();
-      } catch (SQLException e) {
-        /* Ignored */
-      }
-    }
+    } catch (SQLException ex) {
+      Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
+    } 
+    return false;
   }
 }

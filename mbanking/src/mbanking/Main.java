@@ -7,6 +7,7 @@ package mbanking;
 
 import function.MyConnection;
 import javax.swing.JOptionPane;
+import user.CekSaldo;
 import user.Transfer;
 
 /**
@@ -27,7 +28,8 @@ public class Main {
         if (myConnection.getCOnnection() == null) {
           JOptionPane.showMessageDialog(null, "Tidak dapat terhubung ke database. Pastikan Xampp sudah aktif!", "Pemberitahuan", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            new Login();
+          new Login();
+////            new CheckSaldo("22","2222");
         }
       }
     });

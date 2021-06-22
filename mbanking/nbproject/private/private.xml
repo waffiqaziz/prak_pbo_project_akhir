@@ -3,12 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/function/MyConnection.java</file>
+            <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/user/Nasabah.java</file>
             <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/mbanking/Login.java</file>
-            <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/user/Transfer.java</file>
             <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/user/Register.java</file>
+            <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/mbanking/Main.java</file>
             <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/user/ChangePin.java</file>
             <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/user/MainMenu.java</file>
+            <file>file:/D:/pem/java/prak/project_akhir/mbanking/src/user/CheckSaldo.java</file>
         </group>
     </open-files>
 </project-private>
