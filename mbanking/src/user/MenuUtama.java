@@ -33,7 +33,7 @@ public class MenuUtama extends JFrame {
   JButton btnChangePin = new JButton("Change Pin");
   JButton btnWithdraw = new JButton("Withdraw (not yet)");
   JButton btnTranfer = new JButton("Transfer");
-  JButton btnHistory = new JButton("History Transaction (not yet)");
+  JButton btnHistory = new JButton("History Transaction");
   JButton btnLogout = new JButton("Logout");
   
   public MenuUtama(Nasabah n) {
@@ -61,46 +61,38 @@ public class MenuUtama extends JFrame {
     btnSaldo.setBounds(120, 75, 130, 30);
     btnTranfer.setBounds(120, 115, 130, 30);
     btnWithdraw.setBounds(120, 155, 130, 30);
-    btnHistory.setBounds(110, 195, 150, 30);
+    btnHistory.setBounds(95, 195, 180, 30);
     btnChangePin.setBounds(120, 235, 130, 30);
     btnLogout.setBounds(120, 275, 130, 30);
 
     lGuide.setHorizontalAlignment(0);
 // ACTION LISTENER
-    btnChangePin.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        window.dispose();
-        new UbahPin(n);
-      }
+    btnChangePin.addActionListener((ActionEvent arg0) -> {
+      window.dispose();
+      new UbahPin(n);
     });
-    btnSaldo.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        window.dispose();
-        new CekSaldo(n);
-      }
+    btnSaldo.addActionListener((ActionEvent arg0) -> {
+      window.dispose();
+      new CekSaldo(n);
     });
-    btnTranfer.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        window.dispose();
-        new Transfer(n);
-      }
+    btnTranfer.addActionListener((ActionEvent arg0) -> {
+      window.dispose();
+      new Transfer(n);
     });
-    btnLogout.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int yes = JOptionPane.showConfirmDialog(
-            null,
-            "Are you sure want to Logout",
-            "Confirm Logout",
-            JOptionPane.YES_NO_OPTION);
-        if (yes == JOptionPane.YES_OPTION){ 
-          window.dispose();
-          new Login();
-        } else;
-      }
+    btnHistory.addActionListener((ActionEvent arg0) -> {
+      window.dispose();
+      new History(n);
+    });
+    btnLogout.addActionListener((ActionEvent arg0) -> {
+      int yes = JOptionPane.showConfirmDialog(
+              null,
+              "Are you sure want to Logout",
+              "Confirm Logout",
+              JOptionPane.YES_NO_OPTION);
+      if (yes == JOptionPane.YES_OPTION){
+        window.dispose();
+        new Login();
+      } else;
     });
 
     window.addWindowListener(new WindowAdapter() {

@@ -12,19 +12,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import function.ControlTransfer;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-import function.MyConnection;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -44,6 +39,8 @@ public class Transfer {
 
   JButton btnTransfer = new JButton("Transfer");
   JButton btnReset = new JButton("Reset");
+  
+  ControlTransfer control = new ControlTransfer();
 
   public Transfer(Nasabah n) {
     window.setLayout(null);
@@ -77,56 +74,26 @@ public class Transfer {
     lAmount.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 // ACTION LISTENER
-    btnTransfer.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-
-        MyConnection myConnection = new MyConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        String query = null;
-        String temptString = null;
-        int tempt = 0;
-
-        String idPenerima = String.valueOf(pfNo.getPassword()); // pin penerima
-        int jumlah = Integer.valueOf(tfAmount.getText());
-        
-        
-        if (idPenerima.isEmpty() || jumlah == 0) {
-          JOptionPane.showMessageDialog(null, "All Form Must Filled");
-        } else if (updateSaldoPenerima(idPenerima,jumlah)) { // cek no penerima ada/tidak dan update saldonya
-          
-          // Kurangi saldo pengirim
-          tempt = n.getSaldo() - jumlah;
-          query = "UPDATE `nasabah` SET `saldo`=? WHERE `user_id`=?";
-          try {
-            ps = myConnection.getCOnnection().prepareStatement(query);
-            ps.setInt(1, tempt);
-            ps.setString(2, n.getUserID());
-            int i = ps.executeUpdate();
-
-            if (i == 1) { // jika pin sama
-              JOptionPane.showMessageDialog(null, "Transfer Success");
-              System.out.println("Saldo Pengirim Berkurang");
-            } else {
-              System.out.println("Saldo Pengirim tidak Berkurang");
-            }
-          } catch (SQLException ex) {
-            Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-          } 
-        } else {
+    btnTransfer.addActionListener((ActionEvent arg0) -> {
+      String idPenerima = String.valueOf(pfNo.getPassword()); // pin penerima
+      int jumlah = Integer.valueOf(tfAmount.getText());
+      if (idPenerima.isEmpty() || jumlah == 0) {
+        JOptionPane.showMessageDialog(null, "All Form Must Filled");
+      } else {
+        if(control.transfer(n,idPenerima,jumlah)){ // transfer
+          control.writeHistory(n, idPenerima, jumlah);
+          window.dispose();
+          new MenuUtama(n);
+          JOptionPane.showMessageDialog(null, "Transfer Success");
+        }else{
           JOptionPane.showMessageDialog(null, "Transfer Failed");
         }
       }
     });
 
-    btnReset.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        pfNo.setText("");
-        tfAmount.setText("");
-      }
+    btnReset.addActionListener((ActionEvent arg0) -> {
+      pfNo.setText("");
+      tfAmount.setText("");
     });
 
 // MOUSE LISTENER
@@ -166,55 +133,5 @@ public class Transfer {
         }
       }
     });
-  }
-
-  public boolean updateSaldoPenerima(String idPenerima, int jumlah) {
-    MyConnection myConnection = new MyConnection();
-    PreparedStatement ps;
-    ResultSet rs;
-    int tempt = 0;
-    boolean cek = false;
-    
-    String query = "SELECT `saldo` FROM `nasabah` WHERE `acc_number` =?";
-    
-    try {
-      ps = myConnection.getCOnnection().prepareStatement(query);
-      ps.setString(1, idPenerima);
-      rs = ps.executeQuery();
-      System.out.println("cek " + idPenerima);
-      
-      if (rs.next()) {
-        tempt = rs.getInt(1) + jumlah;
-        System.out.println("tempt" + tempt);
-        System.out.println("ACC Penerima Ditemukan");
-        cek = true;
-      } else {
-        JOptionPane.showMessageDialog(null, "Incorrect Destination Number");
-      }
-    } catch (SQLException ex) {
-      Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-    }
-
-    // Jika PIN ditemukan, update saldo penerima
-    if(cek){
-      query = "UPDATE `nasabah` SET `saldo`=? WHERE `acc_number`=?";
-
-      try {
-        ps = myConnection.getCOnnection().prepareStatement(query);
-        ps.setInt(1, tempt); // saldo diubah
-        ps.setString(2, idPenerima);
-        int i = ps.executeUpdate();
-
-        if (i == 1) {
-          System.out.println("Update Saldo Penerima Berhasil");
-          return true;
-        } else {
-          System.err.println("Gagal Update Saldo Penerima");
-        }
-      } catch (SQLException ex) {
-        Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
-    return false;
   }
 }
