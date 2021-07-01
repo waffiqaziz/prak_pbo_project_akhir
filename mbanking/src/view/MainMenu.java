@@ -3,22 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package user;
+package view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
-import function.MyConnection;
+import model.MyConnection;
+import user.Nasabah;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-import mbanking.Login;
+import view.Login;
 
 /**
  *
  * @author Waffiq Aziz / 123190070
  */
-public class MenuUtama extends JFrame {
+public class MainMenu extends JFrame {
 
   MyConnection myConnection = new MyConnection();
 
@@ -36,7 +37,7 @@ public class MenuUtama extends JFrame {
   JButton btnHistory = new JButton("History Transaction");
   JButton btnLogout = new JButton("Logout");
   
-  public MenuUtama(Nasabah n) {
+  public MainMenu(Nasabah n) {
     lGuide.setText("Welcome " + n.getNama());
     lGuide.setVerticalTextPosition(0);
     window.setLayout(null);
@@ -69,11 +70,11 @@ public class MenuUtama extends JFrame {
 // ACTION LISTENER
     btnChangePin.addActionListener((ActionEvent arg0) -> {
       window.dispose();
-      new UbahPin(n);
+      new ChangePIN(n);
     });
     btnSaldo.addActionListener((ActionEvent arg0) -> {
       window.dispose();
-      new CekSaldo(n);
+      new CheckSaldo(n);
     });
     btnTranfer.addActionListener((ActionEvent arg0) -> {
       window.dispose();

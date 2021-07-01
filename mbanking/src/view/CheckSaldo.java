@@ -3,37 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package user;
+package view;
 
-import function.MyConnection;
+import view.MainMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import user.Nasabah;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
  *
  * @author Waffiq Aziz / 123190070
  */
-public class CekSaldo {
+public class CheckSaldo {
 
 //DEKLARASI KOMPONEN
   JFrame window = new JFrame("Check Saldo");
   JLabel lTotalSaldo = new JLabel("Total Saldo");
   JLabel lIntSaldo = new JLabel();
-  JLabel lguide = new JLabel("<HTML><U>Back</U></HTML");
 
   JButton btnBack = new JButton("Back");
   
-  public CekSaldo(Nasabah n) {
+  public CheckSaldo(Nasabah n) {
     window.setLayout(null);
     window.setSize(380, 210);
     window.setVisible(true);
@@ -53,8 +47,7 @@ public class CekSaldo {
     
     lIntSaldo.setBounds(0, 55, 370, 30);
     lIntSaldo.setHorizontalAlignment(0);
-    
-    lguide.setBounds(75, 35, 20, 30);
+   
     btnBack.setBounds(145, 110, 80, 30);
    
     lIntSaldo.setText(String.valueOf(n.getSaldo()));
@@ -63,7 +56,7 @@ public class CekSaldo {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         window.dispose();
-        new MenuUtama(n);
+        new MainMenu(n);
       }
     });
   }

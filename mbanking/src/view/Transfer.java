@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package user;
+package view;
 
+import view.MainMenu;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -16,12 +16,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import function.ControlTransfer;
+import control.ControlNasabah;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import user.Nasabah;
 
 /**
  *
@@ -39,12 +40,13 @@ public class Transfer {
 
   JButton btnTransfer = new JButton("Transfer");
   JButton btnReset = new JButton("Reset");
+  JButton btnBack = new JButton("Back");
   
-  ControlTransfer control = new ControlTransfer();
+  ControlNasabah control = new ControlNasabah();
 
   public Transfer(Nasabah n) {
     window.setLayout(null);
-    window.setSize(380, 250);
+    window.setSize(450, 255);
     window.setVisible(true);
     window.setLocationRelativeTo(null); // center
     window.setResizable(false);
@@ -57,17 +59,19 @@ public class Transfer {
     window.add(pfNo);
     window.add(btnTransfer);
     window.add(btnReset);
+    window.add(btnBack);
 
 // SETT BOUNDS
 // sett bounds(m,n,o,p) >>> (sumbu-x,sumbu-y,panjang komponen, tinggi komponen)
-    lNoRecipient.setBounds(80, 35, 70, 30);
+    lNoRecipient.setBounds(80, 35, 150, 30);
     lAmount.setBounds(80, 75, 70, 30);
 
-    tfAmount.setBounds(170, 75, 120, 30);
-    pfNo.setBounds(170, 35, 120, 30);
+    pfNo.setBounds(230, 35, 120, 30);
+    tfAmount.setBounds(230, 75, 120, 30);
 
-    btnTransfer.setBounds(200, 155, 90, 30);
-    btnReset.setBounds(80, 155, 90, 30);
+    btnTransfer.setBounds(270, 155, 90, 30);
+    btnReset.setBounds(170, 155, 90, 30);
+    btnBack.setBounds(70, 155, 90, 30);
 
     // sett mouse pointer
     lNoRecipient.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -75,25 +79,37 @@ public class Transfer {
 
 // ACTION LISTENER
     btnTransfer.addActionListener((ActionEvent arg0) -> {
-      String idPenerima = String.valueOf(pfNo.getPassword()); // pin penerima
-      int jumlah = Integer.valueOf(tfAmount.getText());
-      if (idPenerima.isEmpty() || jumlah == 0) {
-        JOptionPane.showMessageDialog(null, "All Form Must Filled");
-      } else {
-        if(control.transfer(n,idPenerima,jumlah)){ // transfer
-          control.writeHistory(n, idPenerima, jumlah);
+      int jumlah = 0;
+      int noAccPenerima = 0;
+      
+      try {
+        jumlah = Integer.valueOf(tfAmount.getText());
+        noAccPenerima = Integer.valueOf(String.valueOf(pfNo.getPassword())); // pin penerima
+
+        if (control.transfer(n, noAccPenerima, jumlah)) { // transfer
+          control.writeHistory(n, noAccPenerima, jumlah);
           window.dispose();
-          new MenuUtama(n);
+          new MainMenu(n);
           JOptionPane.showMessageDialog(null, "Transfer Success");
-        }else{
+        } else {
           JOptionPane.showMessageDialog(null, "Transfer Failed");
         }
+
+      } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null,"Fill All Columns" + "\nAmount and No. Recipiens Must be Numeric", "Error Message", JOptionPane.INFORMATION_MESSAGE);
       }
+
+
+      
     });
 
     btnReset.addActionListener((ActionEvent arg0) -> {
       pfNo.setText("");
       tfAmount.setText("");
+    });
+    btnBack.addActionListener((ActionEvent arg0) -> {
+      window.dispose();
+      new MainMenu(n);
     });
 
 // MOUSE LISTENER

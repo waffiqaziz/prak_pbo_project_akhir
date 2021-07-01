@@ -3,26 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package user;
+package view;
 
+import control.ControlNasabah;
+import view.MainMenu;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import user.Nasabah;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
  *
  * @author Waffiq Aziz / 123190070
  */
-public class UbahPin {
+public class ChangePIN {
 
   //DEKLARASI KOMPONEN
   JFrame window = new JFrame("Change PIN");
@@ -38,8 +43,11 @@ public class UbahPin {
 
   JButton btnChange = new JButton("Change");
   JButton btnReset = new JButton("Reset");
+  JButton btnBack = new JButton("Back");
+  
+  ControlNasabah cn = new ControlNasabah();
 
-  public UbahPin(Nasabah n) {
+  public ChangePIN(Nasabah n) {
     window.setLayout(null);
     window.setSize(380, 290);
     //  window.setDefaultCloseOperation(3);
@@ -58,6 +66,7 @@ public class UbahPin {
     window.add(lguide);
     window.add(btnChange);
     window.add(btnReset);
+    window.add(btnBack);
 
 // SETT BOUNDS
 // sett bounds(m,n,o,p) >>> (sumbu-x,sumbu-y,panjang komponen, tinggi komponen)
@@ -70,8 +79,9 @@ public class UbahPin {
     pfNewPin.setBounds(170, 75, 120, 30);
     pfRePin.setBounds(170, 115, 120, 30);
 
-    btnChange.setBounds(200, 195, 90, 30);
-    btnReset.setBounds(80, 195, 90, 30);
+    btnChange.setBounds(230, 195, 90, 30);
+    btnReset.setBounds(140, 195, 90, 30);
+    btnBack.setBounds(50, 195, 90, 30);
 
     // sett mouse pointer
     lOldPin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -81,30 +91,35 @@ public class UbahPin {
 
 // ACTION LISTENER
     btnChange.addActionListener((ActionEvent arg0) -> {
-      System.out.println("Change PIN " + n.getUserID());
+      int newPin = 0, oldPin = 0, rePin = 1;
+      boolean cek = true;
       
-      // Tangkap input user
-      String newPin = String.valueOf(pfNewPin.getPassword());
-      String oldPin = String.valueOf(pfOldPin.getPassword());
-      String rePin = String.valueOf(pfRePin.getPassword());
-      
-      System.out.println("n " + n.getPin());
-      System.out.println(oldPin);
-      // 1. cek input user
-      if (newPin.isEmpty() || oldPin.isEmpty() || rePin.isEmpty()) {
-        pfOldPin.requestFocusInWindow();
-        JOptionPane.showMessageDialog(null, "Fill All the Column");
-      }
-      if (!oldPin.equals(String.valueOf(n.getPin()))) { // 2. cek repin sama/tidak dengan newpin
-        JOptionPane.showMessageDialog(null, "PIN not Same");
-        pfRePin.requestFocusInWindow();
-      } 
-      if (n.changePin(newPin,n.getUserID())){
-        JOptionPane.showMessageDialog(null, "Change PIN Success");
-        window.dispose();
-        new MenuUtama(n);
-      } else {
-        JOptionPane.showMessageDialog(null, "Change PIN Failed");       
+      try{
+        rePin = Integer.valueOf(String.valueOf(pfRePin.getPassword()));
+        newPin = Integer.valueOf(String.valueOf(pfNewPin.getPassword()));
+        oldPin = Integer.valueOf(String.valueOf(pfOldPin.getPassword()));
+        
+        if(rePin != newPin) {
+          JOptionPane.showMessageDialog(null, "Retype and New PIN not Same");
+          pfRePin.requestFocusInWindow();
+          cek = false;
+        }
+
+        if (oldPin == n.getPin() && cek) { // cek pin lama dengan pin input user sama/tidak
+          if (cn.changePin(newPin, n.getUserID())) { // update pin
+            n.setPin(newPin);
+            JOptionPane.showMessageDialog(null, "Change PIN Success");
+            window.dispose();
+            new MainMenu(n);
+          }
+        } else {
+          JOptionPane.showMessageDialog(null, "PIN not Same" + "\nChange PIN Failed", "Error Message", JOptionPane.INFORMATION_MESSAGE);
+          pfOldPin.requestFocusInWindow();
+        }
+
+      } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null, "Fill in all the columns" + "\nPIN Must be Numeric", "Error Message", JOptionPane.INFORMATION_MESSAGE);
+        Logger.getLogger(ChangePIN.class.getName()).log(Level.SEVERE, null, ex);
       }
     });
 
@@ -113,12 +128,16 @@ public class UbahPin {
       pfOldPin.setText("");
       pfRePin.setText("");
     });
+    btnBack.addActionListener((ActionEvent arg0) -> {
+      window.dispose();
+      new MainMenu(n);
+    });
 
 // MOUSE LISTENER
     lguide.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        System.out.println("Register Form Clicked");
+        System.out.println("CS Clicked");
         JOptionPane.showMessageDialog(null, "Please Contact Customer Service");
       }
     });

@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mbanking;
+package view;
 
-import function.MyConnection;
+import model.MyConnection;
 import javax.swing.JOptionPane;
-import user.CekSaldo;
-import user.Transfer;
+import user.Nasabah;
 
 /**
  *
@@ -20,8 +19,6 @@ public class Main {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    // TODO code application logic here
-    /* Create and display the form */
     java.awt.EventQueue.invokeLater(new Runnable() {
       public void run() {
         MyConnection myConnection = new MyConnection();
@@ -29,7 +26,8 @@ public class Main {
           JOptionPane.showMessageDialog(null, "Tidak dapat terhubung ke database. Pastikan Xampp sudah aktif!", "Pemberitahuan", JOptionPane.INFORMATION_MESSAGE);
         } else {
           new Login();
-////            new CheckSaldo("22","2222");
+//Nasabah n = new Nasabah();
+//          new ChangePIN(n);
         }
       }
     });

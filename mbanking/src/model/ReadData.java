@@ -4,43 +4,46 @@
  * and open the template in the editor.
  */
 
-package function;
+package model;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import user.Nasabah;
 
 /**
  *
  * @author Waffiq Aziz / 123190070
  */
 public class ReadData {
-  public String[][] readAllData() {
+  public String[][] readAllData(Nasabah n) {
     // untuk menghitung jumlah baris
     CountRow cr = new CountRow();
 
     // untuk menyimpan data
-    String data[][] = new String[cr.countRow()][5]; // ada 5 kolomwa
+    String data[][] = new String[cr.countRow(n)][5]; // ada 5 kolomwa
 
     try {
       MyConnection myConnection = new MyConnection();
       PreparedStatement ps;
       ResultSet rs;
 
-      String query = "Select * from `log` WHERE `";
+      String query = "Select * from `log` WHERE `id_pengirim`=? OR `id_penerima`=?";
       ps = myConnection.getCOnnection().prepareStatement(query);
+      ps.setInt(1, n.getAccNumber());
+      ps.setInt(2, n.getAccNumber());
       rs = ps.executeQuery();
 
-      int n = 0;
+      int row = 0;
       while (rs.next()) { //konversi tabel ke string
-        data[n][0] = rs.getString(1);
-        data[n][1] = rs.getString(2);
-        data[n][2] = rs.getString(3);
-        data[n][3] = rs.getString(4);
-        data[n][4] = rs.getString(5);
-        n++;
+        data[row][0] = rs.getString(1);
+        data[row][1] = rs.getString(2);
+        data[row][2] = rs.getString(3);
+        data[row][3] = rs.getString(4);
+        data[row][4] = rs.getString(5);
+        row++;
       }
       return data;
     } catch (SQLException ex) {

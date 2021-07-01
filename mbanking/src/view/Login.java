@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mbanking;
+package view;
 
-import user.MenuUtama;
-import user.Register;
+import control.ControlNasabah;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -15,6 +14,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import user.Nasabah;
@@ -78,30 +79,34 @@ public class Login extends JFrame {
 
 // ACTION LISTENER
     btnLogin.addActionListener((ActionEvent arg0) -> {
-      Nasabah n1 = new Nasabah();
+      Nasabah n = new Nasabah();
+      ControlNasabah cn = new ControlNasabah();
       
       // Tangkap input user
       user = tfUser.getText();
-      pin = String.valueOf(pfPass.getPassword());
-      
-      if (user.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Fill User Coloumn");
-        tfUser.requestFocusInWindow();
-      }
-      if (pin.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Fill PIN Coloumn");
-        pfPass.requestFocusInWindow();
-      } else {
-        if(n1.login(user, Integer.valueOf(pin), n1)){
-          window.dispose();
-          MenuUtama mm = new MenuUtama(n1);
-          mm.pack();
-          mm.setLocationRelativeTo(null); // center 
-          JOptionPane.showMessageDialog(null, "Login Success");
-        } else {
-          JOptionPane.showMessageDialog(null, "Incorrect Username or Password" + " Login Failed");
+ 
+      try {
+        pin = String.valueOf(pfPass.getPassword());
+
+        if (user.isEmpty() || pin.isEmpty()) {
+          JOptionPane.showMessageDialog(null, "Fill All Coloumn");
           tfUser.requestFocusInWindow();
+        } else {
+          if (cn.login(user, Integer.valueOf(pin), n)) {
+            window.dispose();
+            MainMenu mm = new MainMenu(n);
+            mm.pack();
+            mm.setLocationRelativeTo(null); // center 
+            JOptionPane.showMessageDialog(null, "Login Success");
+          } else {
+            JOptionPane.showMessageDialog(null,"Incorrect Username or Password" + "\nLogin Failed", "Error Message", JOptionPane.INFORMATION_MESSAGE);
+            System.out.println("Login Gagal");
+            tfUser.requestFocusInWindow();
+          }
         }
+      } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null,"Input PIN Must be Numeric", "Error Message", JOptionPane.INFORMATION_MESSAGE);
+        Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
       }
     });
 

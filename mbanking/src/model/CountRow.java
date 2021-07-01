@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package function;
+package model;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import user.Nasabah;
 
 /**
  *
@@ -17,20 +18,24 @@ import java.util.logging.Logger;
  */
 public class CountRow {
 
-  public int countRow() {
-    MyConnection myConnection = new MyConnection();
+  public int countRow(Nasabah n) {
     PreparedStatement ps;
     ResultSet rs;
-    int  n = 0;
+    int  row = 0;
+    
+    String query = "Select * from `log` WHERE `id_pengirim`=? OR `id_penerima`=?";
+    
     try {
-      String query = "Select * from `log`";
+      MyConnection myConnection = new MyConnection();
       ps = myConnection.getCOnnection().prepareStatement(query);
+      ps.setInt(1, n.getAccNumber());
+      ps.setInt(2, n.getAccNumber());
       rs = ps.executeQuery();
 
       while (rs.next()) {
-        n++;
+        row++;
       }
-      return n ;
+      return row ;
     } catch (SQLException ex) {
       Logger.getLogger(CountRow.class.getName()).log(Level.SEVERE, null, ex);
     }

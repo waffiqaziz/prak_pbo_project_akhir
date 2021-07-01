@@ -3,30 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package user;
+package view;
 
 import com.toedter.calendar.JDateChooser;
+import control.ControlNasabah;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import mbanking.Login;
-import function.MyConnection;
+import model.MyConnection;
+import user.Nasabah;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
@@ -119,56 +114,60 @@ public class Register {
     lguide.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 // ACTION LISTENER
-    btnRegis.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        Nasabah n1 = new Nasabah();
-        MyConnection myConnection = new MyConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        String date = null;
-        String no = tfNo.getText();
-        String name = tfName.getText();
-        String user = tfUser.getText();
-        String email = tfEmail.getText();
-        String telp = tfTelp.getText();
-        String pin = String.valueOf(pfPin.getPassword());
-
-        // cek jika ada kolom yang belum di isi
-        if (user.equals("") || email.equals("") || pin.equals("") || telp.equals("") || dcDate.getDate() == null) {
-          JOptionPane.showMessageDialog(null, "All Form Must Filled");
-        } else { // jika date terisi
+    btnRegis.addActionListener((ActionEvent arg0) -> {
+      Nasabah n = new Nasabah();
+      ControlNasabah cn = new ControlNasabah();
+      String date = null;
+      int pin = 0;
+      
+      String name = tfName.getText();
+      String user = tfUser.getText();
+      String email = tfEmail.getText();
+      String telp = tfTelp.getText();
+      
+      try { // cek PIN harus angka
+        pin = Integer.valueOf(String.valueOf(pfPin.getPassword()));
+      } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null, "PIN must be Numeric", "Error Message", JOptionPane.INFORMATION_MESSAGE);
+      }
+      
+      // cek jika kolom ada yang kosong
+      if (user.equals("") || name.equals("") || email.equals("") || telp.equals("") || dcDate.getDate() == null) {
+        JOptionPane.showMessageDialog(null, "All Form Must Filled");
+      } else {
+        try { // untuk memastikan input apda acc number harus berupa angka
+          int no = Integer.valueOf(tfNo.getText());
+          
+          // cek jika ada kolom yang belum di isi
           SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd"); // format tahun-bulan-hari
           date = dateformat.format(dcDate.getDate());
-          System.out.println("Cek Date");
-          System.out.println(date);
-
-          boolean cek = false;
-
-          if (!checkUserID(no)) { // jika tidak ada user name yang sama, maka akan di masukkan kedalam database
-            n1.setNasabah(no, name, user, email, telp, Integer.valueOf(pin));
-            n1.setSaldo(); // set saldo awal 100000
-            n1.setDate(date);
+          System.out.println("Cek Date " + date);
+          
+          if (!cn.checkAccNumber(no)) { // jika tidak ada pin yang sama, maka akan di masukkan kedalam database
+            n.setNasabah(no, name, user, email, telp);
+            n.setPin(pin);
+            n.setSaldo(100000); // set saldo awal 100000
+            n.setDate(date);
             
-            if(n1.register()){
+            if (cn.register(n)) { // register berhasil
               window.dispose();
               new Login();
               JOptionPane.showMessageDialog(null, "New User Add");
             }
+            
           } else {
             JOptionPane.showMessageDialog(null, "ATM has been Registered as M-Banking");
+            tfNo.requestFocus(); // akan fokus ke acc number
           }
+        } catch (NumberFormatException e) {
+          JOptionPane.showMessageDialog(null, "Acccount Number must be Numeric", "Error Message", JOptionPane.INFORMATION_MESSAGE);
         }
       }
     });
 
-    btnReset.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        pfPin.setText("");
-        tfUser.setText("");
-      }
+    btnReset.addActionListener((ActionEvent arg0) -> {
+      pfPin.setText("");
+      tfUser.setText("");
     });
 
 // MOUSE LISTENER
@@ -231,25 +230,5 @@ public class Register {
     });
   }
   
-  private boolean checkUserID(String accNumber){ // cek apakah acc sudah ada/belum
-    MyConnection myConnection = new MyConnection();
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    
-    String query = "SELECT pin FROM `nasabah` WHERE `acc_number` =?";
-    try {
-      ps = myConnection.getCOnnection().prepareStatement(query);
-      ps.setString(1, accNumber);
-      rs = ps.executeQuery();
 
-      if (rs.next()) { // jika ada username yang sama
-        return true;
-      } else {
-        return false;
-      }
-    } catch (SQLException ex) {
-      Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-    } 
-    return false;
-  }
 }

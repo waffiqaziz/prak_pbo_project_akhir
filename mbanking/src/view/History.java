@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package user;
+package view;
 
-import function.ReadData;
+import view.MainMenu;
+import model.ReadData;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
+import user.Nasabah;
 
 /**
  *
@@ -45,11 +47,11 @@ public class History {
     // sett bounds(m,n,o,p) >>> (sumbu-x,sumbu-y,panjang komponen, tinggi komponen)
     btnBack.setBounds(0, 230, 80, 30);
 
-    if (rd.readAllData() == null) {
+    if (rd.readAllData(n) == null) {
       JOptionPane.showMessageDialog(null, "Tidak Ada Data");
       tabel = new JTable(null, namaKolom); //tabel merupakan variabel untuk tabelnya dengan isi tablemodel
     } else {
-      tabel = new JTable(rd.readAllData(), namaKolom); //tabel merupakan variabel untuk tabelnya dengan isi tablemodel
+      tabel = new JTable(rd.readAllData(n), namaKolom); //tabel merupakan variabel untuk tabelnya dengan isi tablemodel
     }
 
     scrollPane = new JScrollPane(tabel);
@@ -62,7 +64,7 @@ public class History {
     btnBack.addActionListener((ActionEvent arg0) -> {
       window.dispose();
       System.out.println("Yes");
-      new MenuUtama(n);
+      new MainMenu(n);
     });
   }
 }
