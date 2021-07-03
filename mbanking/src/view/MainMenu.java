@@ -32,7 +32,6 @@ public class MainMenu extends JFrame {
 
   JButton btnSaldo= new JButton("Check Saldo");
   JButton btnChangePin = new JButton("Change Pin");
-  JButton btnWithdraw = new JButton("Withdraw (not yet)");
   JButton btnTranfer = new JButton("Transfer");
   JButton btnHistory = new JButton("History Transaction");
   JButton btnLogout = new JButton("Logout");
@@ -41,7 +40,7 @@ public class MainMenu extends JFrame {
     lGuide.setText("Welcome " + n.getNama());
     lGuide.setVerticalTextPosition(0);
     window.setLayout(null);
-    window.setSize(380, 390);
+    window.setSize(380, 350);
     window.setVisible(true);
     window.setLocationRelativeTo(null); // center
     window.setResizable(false);
@@ -51,7 +50,6 @@ public class MainMenu extends JFrame {
     window.add(lGuide);
     window.add(btnSaldo);
     window.add(btnChangePin);
-    window.add(btnWithdraw);
     window.add(btnHistory);
     window.add(btnTranfer);
     window.add(btnLogout);
@@ -61,10 +59,9 @@ public class MainMenu extends JFrame {
     lGuide.setBounds(0, 25, 370, 30);
     btnSaldo.setBounds(120, 75, 130, 30);
     btnTranfer.setBounds(120, 115, 130, 30);
-    btnWithdraw.setBounds(120, 155, 130, 30);
-    btnHistory.setBounds(95, 195, 180, 30);
-    btnChangePin.setBounds(120, 235, 130, 30);
-    btnLogout.setBounds(120, 275, 130, 30);
+    btnHistory.setBounds(95, 155, 180, 30);
+    btnChangePin.setBounds(120, 195, 130, 30);
+    btnLogout.setBounds(120, 235, 130, 30);
 
     lGuide.setHorizontalAlignment(0);
 // ACTION LISTENER
