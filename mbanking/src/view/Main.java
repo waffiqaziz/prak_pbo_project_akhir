@@ -7,7 +7,6 @@ package view;
 
 import model.MyConnection;
 import javax.swing.JOptionPane;
-import user.Nasabah;
 
 /**
  *
@@ -15,9 +14,6 @@ import user.Nasabah;
  */
 public class Main {
 
-  /**
-   * @param args the command line arguments
-   */
   public static void main(String[] args) {
     java.awt.EventQueue.invokeLater(new Runnable() {
       public void run() {
@@ -26,8 +22,6 @@ public class Main {
           JOptionPane.showMessageDialog(null, "Tidak dapat terhubung ke database. Pastikan Xampp sudah aktif!", "Pemberitahuan", JOptionPane.INFORMATION_MESSAGE);
         } else {
           new Login();
-//Nasabah n = new Nasabah();
-//          new ChangePIN(n);
         }
       }
     });

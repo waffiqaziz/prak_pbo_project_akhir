@@ -5,7 +5,6 @@
  */
 package view;
 
-import view.MainMenu;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -99,8 +98,6 @@ public class Transfer {
         JOptionPane.showMessageDialog(null,"Fill All Columns" + "\nAmount and No. Recipiens Must be Numeric", "Error Message", JOptionPane.INFORMATION_MESSAGE);
       }
 
-
-      
     });
 
     btnReset.addActionListener((ActionEvent arg0) -> {
@@ -127,7 +124,7 @@ public class Transfer {
     });
 
     window.addWindowListener(new WindowAdapter() {
-
+      @Override
       public void windowClosing(WindowEvent e) {
         System.out.println("Closed");
       }
