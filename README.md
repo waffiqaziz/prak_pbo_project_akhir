@@ -1,4 +1,4 @@
-# M-Banking
+# PROGRAM APLIKASI PERBANKAN UNTUK NASABAH
 Project Akhir Matkul Praktikum PBO
 
  ## Anggota
